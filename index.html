@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="projectWeatherForecast">
+    <meta name="author" content="yelizErdogan">
+
+    <title>Weather Forecast</title>
+
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/jquery-ui.css">
+  <link href="css/heroic-features.css" rel="stylesheet">
+  <script src="js/jquery-1.12.4.js"></script>
+  <script src="js/jquery-ui.js"></script>
+
+  </head>
+
+  <body>
+
+ 
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+      <div class="container">
+        <a class="navbar-brand" href="#">Weather Forecast</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="#">Home
+                
+              </a>
+            </li>
+            
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+
+    <div class="container">
+
+      <header class="jumbotron my-4 row">
+	  <div class="col-md-9">
+      <input type="text" placeholder="Enter city name here..."  class="form-control txtSearcBox">
+      </div>
+	  <div class="col-md-3">
+        <a href="#" class="btn btn-primary btn-block btnSearch" >Add +</a>
+	</div>   
+		<div class="infoBox col-md-9">
+		</div>	
+	 </header>
+
+
+      <div class="row text-center d-flex flex-row  contents  block" >
+
+    
+
+      </div>
+    
+
+    </div>
+  
+    <footer class="py-5 bg-dark">
+      <div class="container">
+        <p class="m-0 text-center text-white">Yeliz Erdoğan</p>
+      </div>
+     
+    </footer>
+
+ 
+
+     <script type="text/javascript" >
+	      var cityNames = [
+      "Miami",
+      "London",
+      "Berlin",
+      "Frankfurt",
+      "İstanbul",
+      "Ankara",
+      "Amsterdam",
+      "Barcelona",
+      "Paris"
+      
+    ];
+		
+		
+		   $(document).ready(function() {
+		       
+				//default value 
+		         getWeatherForecast("Isparta");
+				 
+				 //input search
+				$(".btnSearch").click(function(){	
+				  var searchText=$(".txtSearcBox").val();
+			      getWeatherForecast(searchText);
+				  
+				  if(cityNames.indexOf(searchText)==-1){
+				     cityNames.push(searchText);
+				     $( ".txtSearcBox" ).autocomplete({
+						source: cityNames
+					  });
+				  }
+				    
+				 $(".txtSearcBox").val("");	  
+				}); 
+			
+	          //search div remove
+			  $(document).on("click",".thisRemove", function(){
+				$(this).parent().parent().parent().remove();
+			});
+				
+			});
+			
+			
+			
+			 function getWeatherForecast(search){
+		       $(".infoBox").html("");
+				var temp="";
+				var weather="";
+				var name="";
+				var country="";
+				var divContent="";
+				var icon="";
+					$.ajax({ 
+						type: 'GET', 
+						url: 'http://api.openweathermap.org/data/2.5/weather?q='+search+'&units=metric&appid=3b6446b3bc4c04dc7630a48e78b22042', 
+						data: { get_param: 'value' }, 
+						dataType: 'json',
+						success: function (data) { 
+						debugger;
+						    temp=data.main.temp;
+						    weather=data.weather[0].description;
+						    name=data.name;
+						    country=data.sys.country;
+							icon=data.weather[0].icon
+					divContent+='<div class="flex-md-column m-3 block__column">';
+					divContent+='<div class="card block_card">';
+
+					divContent+='<div class="card-body block__card">';
+					
+					divContent+='<h4 class="card-title">'+name+','+country+'</h4>';
+					divContent+='<img class="card-img-top" src="http://openweathermap.org/img/w/'+icon+'.png" style="width:50px !important" alt="">';
+					divContent+='<p class="card-text">'+weather+'</p><hr>';
+					divContent+='<p class="card-text">'+temp+' &deg;C</p><hr>';
+					divContent+='</div>';
+					divContent+='<div class="card-footer">';
+					divContent+='<a  href="#" class="btn btn-primary thisRemove" >Remove</a>';
+					divContent+='</div>';
+					divContent+='</div>';
+					divContent+='</div>';
+							
+				    $(".contents").append(divContent);
+						},
+					error: function (xhr, ajaxOptions, thrownError) {
+					debugger;
+					   if(xhr.status==404){
+					    var errorContent='<div class="alert alert-warning  alert-dismissible">';
+                            errorContent+='<a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>';
+							errorContent+='<strong>City not found !</div>';
+					   $(".infoBox").html(errorContent);
+					   }
+					   }
+					});
+		 
+		 }
+	
+	
+	
+	 $( function() {
+   
+      $( ".txtSearcBox" ).autocomplete({
+        source: cityNames
+      });
+    });
+				
+	 </script>
+	
+  </body>
+
+</html>
